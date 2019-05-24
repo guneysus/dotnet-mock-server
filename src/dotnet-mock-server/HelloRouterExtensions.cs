@@ -87,6 +87,12 @@ public static class MockServerExtensions
         return builder;
     }
 
+    public static RouteBuilder Get<T>(this RouteBuilder builder, string url, RequestDelegate handler)
+    {
+        builder.MapGet(url, handler);
+        return builder;
+    }
+
     public static RouteBuilder Post(this RouteBuilder builder, string url, RequestDelegate handler)
     {
         builder.MapPost(url, handler);
