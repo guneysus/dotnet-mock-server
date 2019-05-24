@@ -1,12 +1,21 @@
-﻿using System;
+﻿using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 
 namespace dotnet_mock_server
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            IWebHostBuilder webHostBuilder = CreateWebHostBuilder(args);
+            IWebHost webHost = webHostBuilder.Build();
+            webHost.Run();
         }
+
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .UseLibuv()
+                .UseKestrel()
+                .UseStartup<Startup>();
     }
 }

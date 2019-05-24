@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-mock-server", "dotnet-mock-server\dotnet-mock-server.csproj", "{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {779DDD04-A7E8-41B4-B3B1-3FF1053E870B}
+	EndGlobalSection
+EndGlobal
