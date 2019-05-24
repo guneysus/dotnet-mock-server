@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using System;
 
 namespace dotnet_mock_server
 {
@@ -30,12 +27,31 @@ namespace dotnet_mock_server
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (env.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
 
-            app.UseHelloRouter();
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+                      ForwardedHeaders.XForwardedProto
+            });
+
+            app
+                .UseMockServer()
+                .Get("now", () => DateTime.Now)
+                .Post("now", () => DateTime.Now)
+                .Get("ip", h =>
+                {
+                    return h.Response.WriteAsync(h.Connection.RemoteIpAddress.ToString());
+                })
+                .Post("ip", h =>
+                {
+                    return h.Response.WriteAsync(h.Connection.RemoteIpAddress.ToString());
+                })
+                .BuildRoutes()
+                ;
         }
     }
 }
