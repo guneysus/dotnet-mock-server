@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -26,68 +24,92 @@ namespace dotnet_mock_server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddRouting();
+            services.AddTransient<IUserRepository, MockUserRepository>();
+
+            //services.AddTransient<MockRepository<User>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            //if (env.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
-
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor |
                       ForwardedHeaders.XForwardedProto
             });
 
+
             app
                 .UseMockServer()
 
-                .Get("now", () => DateTime.Now)
-                .Post("now", () => DateTime.Now)
+                .On("GET", "/response/json", "application/json", "{}")
 
-                .Get("ip", h =>
+                .OnGet("/response/json", "application/json", "{}")
+
+                .OnGet("/response/json", "application/json", (req, resp, route) =>
                 {
-                    return h.Response.WriteAsync(h.Connection.RemoteIpAddress.ToString());
-                })
-                .Post("ip", h =>
-                {
-                    return h.Response.WriteAsync(h.Connection.RemoteIpAddress.ToString());
+                    return "{}";
                 })
 
-                .Get("/api/user", () =>
-                {
-                    List<User> response = GetAllUsers();
-                    return response;
-                })
-                .Get("/api/user/{id:int}", handler =>
-                {
-                    int id = Convert.ToInt32(handler.GetRouteValue("id"));
-                    var users = GetAllUsers();
-                    User user = users.First(x => x.Id == id);
-                    return handler.Response.WriteAsync(JsonConvert.SerializeObject(user));
-                })
+                .On("GET", "/response/xml", "application/xml", $@"<?xml version=""1.0"" encoding=""UTF-8""?>
+<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+")
+            .On("GET", "/api/user", "application/json", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>().GetAllUsers()))
 
-                .BuildRoutes()
-                ;
-        }
+            .On("GET", "/api/user/1", "application/json", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>()[1]))
 
-        private static List<User> GetAllUsers()
-        {
-            return JsonConvert.DeserializeObject<List<User>>(@"
-[{""id"":""1"",""createdAt"":""2019-05-06T19:32:07.034Z"",""name"":""Rosario Beier"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg""},{""id"":""2"",""createdAt"":""2019-05-07T10:28:32.699Z"",""name"":""Rocio Gibson DVM"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/SlaapMe/128.jpg""},{""id"":""3"",""createdAt"":""2019-05-06T17:00:24.825Z"",""name"":""Adeline Torphy"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg""}]
-");
+            .OnGet<User>("/api/user/{id:int}", "application/json", (route) =>
+            {
+                var id = Convert.ToInt32(route.Values["id"]);
+                var repo = app.ApplicationServices.GetService<IUserRepository>();
+                var user = repo[id];
+                return user;
+            })
+
+            .OnGet("/api/user/{id:int}", "application/json", (route) =>
+            {
+                var id = Convert.ToInt32(route.Values["id"]);
+                var repo = app.ApplicationServices.GetService<IUserRepository>();
+                var user = repo[id];
+                var content = JsonConvert.SerializeObject(user);
+                return content;
+            })
+
+            .OnGet<User>("/api/user/{id:int}", "application/json", (route) =>
+            {
+                var id = Convert.ToInt32(route.Values["id"]);
+                var repo = app.ApplicationServices.GetService<IUserRepository>();
+                var user = repo[id];
+                return user;
+            })
+
+            .BuildRoutes();
         }
     }
 }
 
-public partial class User
+public class MockUserRepository : IUserRepository
+{
+    private List<User> _users = JsonConvert.DeserializeObject<List<User>>(@"
+[{""id"":""1"",""createdAt"":""2019-05-06T19:32:07.034Z"",""name"":""Rosario Beier"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg""},{""id"":""2"",""createdAt"":""2019-05-07T10:28:32.699Z"",""name"":""Rocio Gibson DVM"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/SlaapMe/128.jpg""},{""id"":""3"",""createdAt"":""2019-05-06T17:00:24.825Z"",""name"":""Adeline Torphy"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg""}]
+");
+
+    public User this[int index] => _users.FirstOrDefault(x => x.Id == index);
+
+    public List<User> GetAllUsers() => _users;
+
+}
+
+public class User
 {
     [JsonProperty("id")]
-    //[JsonConverter(typeof(ParseStringConverter))]
-    public long Id { get; set; }
+    public int Id { get; set; }
 
     [JsonProperty("createdAt")]
     public DateTimeOffset CreatedAt { get; set; }
@@ -97,4 +119,11 @@ public partial class User
 
     [JsonProperty("avatar")]
     public Uri Avatar { get; set; }
+}
+
+public interface IUserRepository
+{
+    User this[int index] { get; }
+
+    List<User> GetAllUsers();
 }
