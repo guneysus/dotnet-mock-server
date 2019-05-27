@@ -1,6 +1,8 @@
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -25,11 +27,8 @@ namespace dotnet_mock_server.tests
 
             // Assert
             response.EnsureSuccessStatusCode(); // Status Code 200-299
-            Assert.Equal("application/json; charset=utf-8",
+            Assert.Contains("application/json",
                 response.Content.Headers.ContentType.ToString());
-
-            Assert.Equal("bar", response.Content.Headers.GetValues("foo").ToString());
-
         }
 
         [Fact]
@@ -64,6 +63,23 @@ namespace dotnet_mock_server.tests
             var user = JsonConvert.DeserializeObject<User>(content);
 
             Assert.NotNull(user);
+        }
+
+        [Fact]
+        public async Task check_headers()
+        {
+            // Act
+            var response = await client.GetAsync("/headers");
+
+            // Assert
+            response.EnsureSuccessStatusCode(); // Status Code 200-299
+            var content = await response.Content.ReadAsStringAsync();
+
+            HttpResponseHeaders headers = response.Headers;
+
+            Assert.Equal(content.Length, response.Content.Headers.ContentLength);
+            Assert.Equal("bar", headers.GetValues("foo").First());
+
         }
     }
 }

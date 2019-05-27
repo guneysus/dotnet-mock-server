@@ -53,4 +53,7 @@ public class Verb
 
     [JsonProperty("headers")]
     public Dictionary<string, string> Headers { get; set; }
+
+    [JsonProperty("statusCode")]
+    public int StatusCode { get; set; }
 }
