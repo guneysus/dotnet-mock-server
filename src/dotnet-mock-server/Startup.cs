@@ -38,6 +38,10 @@ namespace dotnet_mock_server
                       ForwardedHeaders.XForwardedProto
             });
 
+            MockConfig mockConfig = MockConfig.ReadConfig("mockServer.json");
+            app.UseMockServer(mockConfig);
+
+            return;
 
             app
                 .UseMockServer()
@@ -88,7 +92,7 @@ namespace dotnet_mock_server
                 return user;
             })
 
-            .BuildRoutes();
+            .BuildAndUseRouter();
         }
     }
 }

@@ -17,6 +17,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv" Version="2.2.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="mockServer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <PropertyGroup>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-mock-server</ToolCommandName>

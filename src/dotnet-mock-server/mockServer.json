@@ -1,0 +1,23 @@
+{
+  "/json": {
+    "get": {
+      "content": {
+        "hello": "world"
+      },
+      "headers": {
+        "foo": "bar"
+      },
+      "contentType": "application/json"
+    },
+    "post": {
+      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note>  <to>Tove<\/to>  <from>Jani<\/from>  <heading>Reminder<\/heading>  <body>Don't forget me this weekend!<\/body><\/note>",
+      "contentType": "application/xml"
+    }
+  },
+  "/xml": {
+    "get": {
+      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note>  <to>Tove<\/to>  <from>Jani<\/from>  <heading>Reminder<\/heading>  <body>Don't forget me this weekend!<\/body><\/note>",
+      "contentType": "application/xml"
+    }
+  }
+}

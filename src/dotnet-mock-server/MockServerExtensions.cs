@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 public static class MockServerExtensions
@@ -40,13 +41,39 @@ public static class MockServerExtensions
         return new RouteBuilder(App, defaultHandler);
     }
 
+    public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockConfig config)
+    {
+        App = app;
+        RouteBuilder routeBuilder = new RouteBuilder(App);
+
+        foreach (KeyValuePair<string, UrlConfig> kv in config)
+        {
+            var url = kv.Key;
+            var urlConfig = kv.Value;
+
+            foreach (var ukv in urlConfig)
+            {
+                var method = ukv.Key;
+                var verb = ukv.Value;
+
+                routeBuilder.On(method, url, verb.ContentType, verb.Content.ToString());
+            }
+
+        }
+
+        routeBuilder.BuildAndUseRouter();
+
+        return routeBuilder;
+    }
+
+
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app)
     {
         App = app;
         return new RouteBuilder(App);
     }
 
-    public static void BuildRoutes(this IRouteBuilder builder)
+    public static void BuildAndUseRouter(this IRouteBuilder builder)
     {
         IRouter routes = builder.Build();
         App.UseRouter(routes);
