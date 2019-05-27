@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace dotnet_mock_server
@@ -43,16 +42,16 @@ namespace dotnet_mock_server
             app
                 .UseMockServer()
 
-                .On("GET", "/response/json", "application/json", "{}")
+                .On("GET", "/json", "application/json; charset=utf-8", "{}")
 
-                .OnGet("/response/json", "application/json", "{}")
+                .OnGet("/json", "application/json; charset=utf-8", "{}")
 
-                .OnGet("/response/json", "application/json", (req, resp, route) =>
+                .OnGet("/json", "application/json; charset=utf-8", (req, resp, route) =>
                 {
                     return "{}";
                 })
 
-                .On("GET", "/response/xml", "application/xml", $@"<?xml version=""1.0"" encoding=""UTF-8""?>
+                .On("GET", "/xml", "application/xml", $@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <note>
   <to>Tove</to>
   <from>Jani</from>
@@ -60,11 +59,11 @@ namespace dotnet_mock_server
   <body>Don't forget me this weekend!</body>
 </note>
 ")
-            .On("GET", "/api/user", "application/json", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>().GetAllUsers()))
+            .On("GET", "/api/user", "application/json; charset=utf-8", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>().GetAllUsers()))
 
-            .On("GET", "/api/user/1", "application/json", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>()[1]))
+            .On("GET", "/api/user/1", "application/json; charset=utf-8", JsonConvert.SerializeObject(app.ApplicationServices.GetService<IUserRepository>()[1]))
 
-            .OnGet<User>("/api/user/{id:int}", "application/json", (route) =>
+            .OnGet("/api/user/{id:int}", "application/json; charset=utf-8", (route) =>
             {
                 var id = Convert.ToInt32(route.Values["id"]);
                 var repo = app.ApplicationServices.GetService<IUserRepository>();
@@ -72,7 +71,7 @@ namespace dotnet_mock_server
                 return user;
             })
 
-            .OnGet("/api/user/{id:int}", "application/json", (route) =>
+            .OnGet("/api/user/{id:int}", "application/json; charset=utf-8", (route) =>
             {
                 var id = Convert.ToInt32(route.Values["id"]);
                 var repo = app.ApplicationServices.GetService<IUserRepository>();
@@ -81,7 +80,7 @@ namespace dotnet_mock_server
                 return content;
             })
 
-            .OnGet<User>("/api/user/{id:int}", "application/json", (route) =>
+            .OnGet("/api/user/{id:int}", "application/json; charset=utf-8", (route) =>
             {
                 var id = Convert.ToInt32(route.Values["id"]);
                 var repo = app.ApplicationServices.GetService<IUserRepository>();
@@ -92,38 +91,4 @@ namespace dotnet_mock_server
             .BuildRoutes();
         }
     }
-}
-
-public class MockUserRepository : IUserRepository
-{
-    private List<User> _users = JsonConvert.DeserializeObject<List<User>>(@"
-[{""id"":""1"",""createdAt"":""2019-05-06T19:32:07.034Z"",""name"":""Rosario Beier"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg""},{""id"":""2"",""createdAt"":""2019-05-07T10:28:32.699Z"",""name"":""Rocio Gibson DVM"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/SlaapMe/128.jpg""},{""id"":""3"",""createdAt"":""2019-05-06T17:00:24.825Z"",""name"":""Adeline Torphy"",""avatar"":""https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg""}]
-");
-
-    public User this[int index] => _users.FirstOrDefault(x => x.Id == index);
-
-    public List<User> GetAllUsers() => _users;
-
-}
-
-public class User
-{
-    [JsonProperty("id")]
-    public int Id { get; set; }
-
-    [JsonProperty("createdAt")]
-    public DateTimeOffset CreatedAt { get; set; }
-
-    [JsonProperty("name")]
-    public string Name { get; set; }
-
-    [JsonProperty("avatar")]
-    public Uri Avatar { get; set; }
-}
-
-public interface IUserRepository
-{
-    User this[int index] { get; }
-
-    List<User> GetAllUsers();
 }

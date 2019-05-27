@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-mock-server", "dotnet-mock-server\dotnet-mock-server.csproj", "{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dotnet-mock-server", "dotnet-mock-server\dotnet-mock-server.csproj", "{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dotnet-mock-server.tests", "dotnet-mock-server.tests\dotnet-mock-server.tests.csproj", "{658E494F-4C61-4FC1-9AD9-87B3C116C2E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DC7582D-6EF7-4908-9ED4-34C85152CBAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{658E494F-4C61-4FC1-9AD9-87B3C116C2E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{658E494F-4C61-4FC1-9AD9-87B3C116C2E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{658E494F-4C61-4FC1-9AD9-87B3C116C2E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{658E494F-4C61-4FC1-9AD9-87B3C116C2E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

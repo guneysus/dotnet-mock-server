@@ -52,16 +52,52 @@ public static class MockServerExtensions
         App.UseRouter(routes);
     }
 
+    static Task Content(HttpResponse response, string content, string type)
+    {
+        response.ContentLength = content.Length;
+        response.Headers.Add("content-type", type);
+        return response.WriteAsync(content);
+    }
+
     static Task Json<T>(HttpContext handler, Func<T> func)
     {
-        handler.Response.Headers.Add("content-type", "application/json");
-        return handler.Response.WriteAsync(JsonConvert.SerializeObject(func()));
+        HttpResponse response = handler.Response;
+
+        string json = JsonConvert.SerializeObject(func());
+        
+        return Json(response, json);
     }
 
     static Task Json<T>(HttpContext handler, T entity)
     {
-        handler.Response.Headers.Add("content-type", "application/json");
-        return handler.Response.WriteAsync(JsonConvert.SerializeObject(entity));
+        HttpResponse response = handler.Response;
+        string json = JsonConvert.SerializeObject(entity);
+        return Json(response, json);
+    }
+
+    static Task Json(HttpContext handler, string json)
+    {
+        HttpResponse response = handler.Response;
+        return Json(response, json);
+    }
+
+    static Task Json<T>(HttpResponse response, string json)
+    {
+        response.ContentLength = json.Length;
+        response.Headers.Add("content-type", "application/json; charset=utf-8");
+        return response.WriteAsync(json);
+    }
+
+    static Task Json<T>(HttpResponse response, T entity)
+    {
+        string json = JsonConvert.SerializeObject(entity);
+        return Json(response, json);
+    }
+
+    static Task Json<T>(HttpResponse response, Func<T> func)
+    {
+        string json = JsonConvert.SerializeObject(func());
+        return Json(response, json);
     }
 
     public static IRouteBuilder Get<T>(this IRouteBuilder builder, string url, Func<T> func)
@@ -121,9 +157,8 @@ public static class MockServerExtensions
     {
         builder.MapVerb(method, template, (req, resp, route) =>
         {
-            resp.Headers.Add("content-type", contentType);
-            resp.Headers.ContentLength = content.Length;
-            return resp.WriteAsync(content);
+            IHeaderDictionary headers = resp.Headers;
+            return Content(resp, content, contentType);
         });
 
         return builder;
@@ -136,9 +171,7 @@ public static class MockServerExtensions
     {
         builder.MapGet(template, (req, resp, route) =>
         {
-            resp.Headers.Add("content-type", contentType);
-            resp.Headers.ContentLength = content.Length;
-            return resp.WriteAsync(content);
+            return Content(resp, content, contentType);
         });
 
         return builder;
@@ -151,11 +184,9 @@ public static class MockServerExtensions
     {
         builder.MapGet(template, (req, resp, route) =>
         {
-            var body = gen(req, resp, route);
+            string content = gen(req, resp, route);
 
-            resp.Headers.Add("content-type", contentType);
-            resp.Headers.ContentLength = body.Length;
-            return resp.WriteAsync(body);
+            return Content(resp, content, contentType);
         });
 
         return builder;
@@ -169,10 +200,8 @@ public static class MockServerExtensions
         builder.MapGet(template, (req, resp, route) =>
         {
             var body = gen(route);
-            var json = JsonConvert.SerializeObject(body);
-            resp.Headers.Add("content-type", contentType);
-            resp.Headers.ContentLength = json.Length;
-            return resp.WriteAsync(json);
+            string content = JsonConvert.SerializeObject(body);
+            return Content(resp, content, contentType);
         });
 
         return builder;
@@ -185,11 +214,8 @@ public static class MockServerExtensions
     {
         builder.MapGet(template, (req, resp, route) =>
         {
-            var body = gen(route);
-
-            resp.Headers.Add("content-type", contentType);
-            resp.Headers.ContentLength = body.Length;
-            return resp.WriteAsync(body);
+            string content = gen(route);
+            return Content(resp, content, contentType);
         });
 
         return builder;
