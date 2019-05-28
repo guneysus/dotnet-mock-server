@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 public static class MockServerExtensions
@@ -35,7 +36,17 @@ public static class MockServerExtensions
                             new RecursiveConverter()
                     });
                     verb.Content = JsonConvert.SerializeObject(content);
-                    routeBuilder.On(method, url, verb);
+
+                    Func<string> f = () =>
+                    {
+                        var ff = JsonConvert
+                            .DeserializeObject<IDictionary<string, object>>(verb.Content.ToString(), new JsonConverter[] {
+                            new RecursiveConverter()
+                        });
+                        var resp = JsonConvert.SerializeObject(ff);
+                        return resp;
+                    };
+                    routeBuilder.On(method, url, verb.ContentType, f);
                 }
             }
 
@@ -58,6 +69,21 @@ public static class MockServerExtensions
     {
         IRouter routes = builder.Build();
         App.UseRouter(routes);
+    }
+
+    private static Task Content(HttpResponse response, string contentType, Func<string> gen)
+    {
+        response.Headers.Add("content-type", contentType);
+        Task task;
+
+        var content = gen();
+
+        response.ContentLength = content.Length;
+        response.StatusCode = (int)HttpStatusCode.OK;
+        task = response.WriteAsync(content);
+
+        return task;
+
     }
 
     private static Task Content(HttpResponse response, MockServerHttpVerb verb)
@@ -145,11 +171,11 @@ public static class MockServerExtensions
 
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,
-        string template, Func<RouteData, string> gen)
+        string template, string contentType, Func<string> gen)
     {
         builder.MapVerb(method, template, (req, resp, route) =>
         {
-            return Content(resp,// gen());
+            return Content(resp, contentType, gen);
         });
 
         return builder;
