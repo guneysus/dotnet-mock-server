@@ -10,7 +10,8 @@ namespace dotnet_mock_server
 {
     public class Program
     {
-        private const string DEFAULT_CONFIG_FILE = "configTemplate.json";
+        private const string TEMPLATE_FILE_NAME = "configTemplate.json";
+        private const string CONFIG_FILE_NAME = "mockServer.json";
 
         public static void Main(string[] args)
         {
@@ -22,10 +23,14 @@ namespace dotnet_mock_server
                 "An option whose argument is parsed as an int",
                 new Argument<bool>(defaultValue: false));
 
+
+            var defaultConfigFileFullPath = Path.Join(Directory.GetCurrentDirectory(), CONFIG_FILE_NAME);
+            var templateConfigFileFullPath = Path.Join(AppContext.BaseDirectory, TEMPLATE_FILE_NAME);
+
             var configOption = new Option(
                 "--config",
                 "An option whose argument is parsed as an int",
-                new Argument<string>("mockServer.json"));
+                new Argument<string>(defaultConfigFileFullPath));
 
             // Add them to the root command
             var rootCommand = new RootCommand();
@@ -36,16 +41,24 @@ namespace dotnet_mock_server
 
             rootCommand.Handler = CommandHandler.Create<bool, string>((generateConfig, config) =>
             {
-                if (config == DEFAULT_CONFIG_FILE)
+                if (config == CONFIG_FILE_NAME)
+                {
                     throw new ArgumentException(nameof(config));
+                }
 
                 //var configTemplate = new FileInfo(DEFAULT_CONFIG_FILE).FullName;
 
                 Console.WriteLine($"--generate-config => {generateConfig}");
-                
-                if(generateConfig)
+
+                if (!File.Exists(config))
                 {
-                    File.Copy(DEFAULT_CONFIG_FILE, config, overwrite: true);
+                    Console.WriteLine($"Generating default config => {new FileInfo(config).FullName}");
+                    generateConfig = true;
+                }
+
+                if (generateConfig)
+                {
+                    File.Copy(templateConfigFileFullPath, config, overwrite: true);
                 }
             });
 
