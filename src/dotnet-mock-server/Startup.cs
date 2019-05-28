@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.IO;
 using System.Linq;
 
 namespace dotnet_mock_server
@@ -31,7 +33,9 @@ namespace dotnet_mock_server
                       ForwardedHeaders.XForwardedProto
             });
 
-            MockServerConfig mockConfig = MockServerConfig.ReadConfig("mockServer.json");
+            var configFile = Configuration.GetValue<string>("config", "mockServer.json");
+
+            MockServerConfig mockConfig = MockServerConfig.ReadConfig(configFile);
             app.UseMockServer(mockConfig);
         }
     }

@@ -31,6 +31,8 @@ public static class MockServerExtensions
 
         }
 
+        routeBuilder.OnGet("/__config", "application/json", (route) => config);
+
         routeBuilder.BuildAndUseRouter();
 
         return routeBuilder;

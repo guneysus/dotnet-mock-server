@@ -21,7 +21,7 @@ namespace dotnet_mock_server.tests
         }
 
         [Fact]
-        public async Task get_json_async()
+        public async Task get_json()
         {
             // Act
             var response = await client.GetAsync("/json");
@@ -33,7 +33,7 @@ namespace dotnet_mock_server.tests
         }
 
         [Fact]
-        public async Task get_xml_async()
+        public async Task get_xml()
         {
             // Act
             var response = await client.GetAsync("/xml");
@@ -45,7 +45,7 @@ namespace dotnet_mock_server.tests
         }
 
         [Fact]
-        public async Task get_users_async()
+        public async Task get_users()
         {
             var response = await client.GetAsync("/api/user/");
             response.EnsureSuccessStatusCode(); // Status Code 200-299
@@ -56,7 +56,7 @@ namespace dotnet_mock_server.tests
         }
 
         [Fact]
-        public async Task get_single_user_async()
+        public async Task get_single_user()
         {
             var response = await client.GetAsync("/api/user/1");
             response.EnsureSuccessStatusCode(); // Status Code 200-299
