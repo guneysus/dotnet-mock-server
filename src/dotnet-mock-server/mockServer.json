@@ -76,7 +76,7 @@
   "/redirect": {
     "get": {
       "headers": {
-        "Location": "http://example.com"
+        "Location": "https://example.com"
       },
       "statusCode":  301
     }

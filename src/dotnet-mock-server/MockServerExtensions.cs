@@ -41,12 +41,12 @@ public static class MockServerExtensions
         return new RouteBuilder(App, defaultHandler);
     }
 
-    public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockConfig config)
+    public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockServerConfig config)
     {
         App = app;
         RouteBuilder routeBuilder = new RouteBuilder(App);
 
-        foreach (KeyValuePair<string, UrlConfig> kv in config)
+        foreach (KeyValuePair<string, MockServerUrlConfig> kv in config)
         {
             var url = kv.Key;
             var urlConfig = kv.Value;
@@ -54,9 +54,9 @@ public static class MockServerExtensions
             foreach (var ukv in urlConfig)
             {
                 var method = ukv.Key;
-                Verb verb = ukv.Value;
+                MockServerHttpVerb verb = ukv.Value;
 
-                routeBuilder.On(method, url, verb.ContentType, verb.Content, verb.Headers, verb.StatusCode);
+                routeBuilder.On(method, url, verb);
             }
 
         }
@@ -65,7 +65,6 @@ public static class MockServerExtensions
 
         return routeBuilder;
     }
-
 
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app)
     {
@@ -79,6 +78,7 @@ public static class MockServerExtensions
         App.UseRouter(routes);
     }
 
+    [Obsolete("use the overload: static Task Content(HttpResponse response, Verb verb)", false)]
     static Task Content(HttpResponse response, object content, string type, Dictionary<string, string> headers, int statusCode = 200)
     {
         response.Headers.Add("content-type", type);
@@ -103,7 +103,7 @@ public static class MockServerExtensions
         return task;
     }
 
-
+    [Obsolete("use the overload: static Task Content(HttpResponse response, Verb verb)", false)]
     static Task Content(HttpResponse response, object content, string type)
     {
         response.Headers.Add("content-type", type);
@@ -123,6 +123,34 @@ public static class MockServerExtensions
 
         return task;
     }
+
+    static Task Content(HttpResponse response, MockServerHttpVerb verb)
+    {
+        response.Headers.Add("content-type", verb.ContentType);
+
+        foreach (var kv in verb.Headers)
+        {
+            response.Headers.Add(kv.Key, kv.Value);
+        }
+
+        Task task;
+
+        if (verb.Content != null)
+        {
+            response.ContentLength = verb.Content.ToString().Length;
+            response.StatusCode = verb.StatusCode;
+            task = response.WriteAsync(verb.Content.ToString());
+        }
+        else
+        {
+            response.ContentLength = 0;
+            response.StatusCode = verb.StatusCode;
+            task = response.WriteAsync(string.Empty);
+        }
+
+        return task;
+    }
+
     static Task Json<T>(HttpContext handler, Func<T> func)
     {
         HttpResponse response = handler.Response;
@@ -213,18 +241,24 @@ public static class MockServerExtensions
         return builder;
     }
 
+    [Obsolete("", false)]
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,
         string template,
         string contentType,
         object content, Dictionary<string, string> headers = null, int statusCode = 200)
     {
+        var verb = new MockServerHttpVerb()
+        {
+            Content = content,
+            ContentType = contentType,
+            Headers = headers ?? new Dictionary<string, string>(),
+            StatusCode = statusCode
+        };
+
         builder.MapVerb(method, template, (req, resp, route) =>
         {
-            if(headers != default(Dictionary<string, string>))
-                return Content(resp, content, contentType, headers, statusCode);
-
-            return Content(resp, content, contentType);
+            return Content(resp, verb);
         });
 
         return builder;
@@ -232,16 +266,11 @@ public static class MockServerExtensions
 
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,
-        string template,
-        string contentType,
-        object content, Verb verb)
+        string template, MockServerHttpVerb verb)
     {
         builder.MapVerb(method, template, (req, resp, route) =>
         {
-            if (verb.Headers != default(Dictionary<string, string>))
-                return Content(resp, content, contentType, verb.Headers, verb.StatusCode);
-
-            return Content(resp, content, contentType);
+            return Content(resp, verb);
         });
 
         return builder;
@@ -254,7 +283,13 @@ public static class MockServerExtensions
     {
         builder.MapGet(template, (req, resp, route) =>
         {
-            return Content(resp, content, contentType);
+            var verb = new MockServerHttpVerb()
+            {
+                ContentType = contentType,
+                Content = content
+            };
+
+            return Content(resp, verb);
         });
 
         return builder;
@@ -284,7 +319,14 @@ public static class MockServerExtensions
         {
             var body = gen(route);
             string content = JsonConvert.SerializeObject(body);
-            return Content(resp, content, contentType);
+
+            var verb = new MockServerHttpVerb()
+            {
+                ContentType = contentType,
+                Content = content
+            };
+
+            return Content(resp, verb);
         });
 
         return builder;
@@ -298,7 +340,14 @@ public static class MockServerExtensions
         builder.MapGet(template, (req, resp, route) =>
         {
             string content = gen(route);
-            return Content(resp, content, contentType);
+
+            var verb = new MockServerHttpVerb()
+            {
+                ContentType = contentType,
+                Content = content
+            };
+
+            return Content(resp, verb);
         });
 
         return builder;

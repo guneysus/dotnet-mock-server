@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.Testing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,6 +81,22 @@ namespace dotnet_mock_server.tests
             Assert.Equal(content.Length, response.Content.Headers.ContentLength);
             Assert.Equal("bar", headers.GetValues("foo").First());
 
+        }
+
+        [Fact]
+        public async Task check_redirect()
+        {
+            var client = factory.CreateClient(new WebApplicationFactoryClientOptions() {
+                AllowAutoRedirect = false
+            });
+
+            var response = await client.GetAsync("/redirect");
+            Assert.Equal(301, (int)response.StatusCode);
+
+            HttpContentHeaders contentHeaders = response.Content.Headers;
+            HttpResponseHeaders headers = response.Headers;
+
+            Assert.NotEmpty(headers.Location.OriginalString);
         }
     }
 }

@@ -38,10 +38,10 @@ namespace dotnet_mock_server
                       ForwardedHeaders.XForwardedProto
             });
 
-            MockConfig mockConfig = MockConfig.ReadConfig("mockServer.json");
+            MockServerConfig mockConfig = MockServerConfig.ReadConfig("mockServer.json");
             app.UseMockServer(mockConfig);
 
-            return;
+            //return;
 
             app
                 .UseMockServer()
