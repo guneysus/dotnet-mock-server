@@ -90,43 +90,10 @@ public static class MockServerExtensions
         return Json(response, json);
     }
 
-    static Task Json<T>(HttpResponse response, string json)
-    {
-        response.ContentLength = json.Length;
-        response.Headers.Add("content-type", "application/json; charset=utf-8");
-        return response.WriteAsync(json);
-    }
-
     static Task Json<T>(HttpResponse response, T entity)
     {
         string json = JsonConvert.SerializeObject(entity);
         return Json(response, json);
-    }
-
-    static Task Json<T>(HttpResponse response, Func<T> func)
-    {
-        string json = JsonConvert.SerializeObject(func());
-        return Json(response, json);
-    }
-
-    public static IRouteBuilder Get<T>(this IRouteBuilder builder, string url, Func<T> func)
-    {
-        builder.MapGet(url, handler =>
-        {
-            return Json(handler, func);
-        });
-
-        return builder;
-    }
-
-    public static IRouteBuilder Get<T>(this IRouteBuilder builder, string url, T entity)
-    {
-        builder.MapGet(url, handler =>
-        {
-            return Json(handler, entity);
-        });
-
-        return builder;
     }
 
     public static IRouteBuilder On(this IRouteBuilder builder,
@@ -190,7 +157,6 @@ public static class MockServerExtensions
         builder.MapGet(template, (req, resp, route) =>
         {
             string content = gen(req, resp, route);
-        {
             var verb = new MockServerHttpVerb()
             {
                 ContentType = contentType,
