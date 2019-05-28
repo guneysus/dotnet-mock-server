@@ -10,37 +10,6 @@ public static class MockServerExtensions
 {
     static IApplicationBuilder App { get; set; }
 
-    public static IRouteBuilder Example(this IApplicationBuilder app)
-    {
-        RouteHandler defaultHandler = new RouteHandler(context => {
-            var routeValues = context.GetRouteData().Values;
-            return context.Response.WriteAsync(
-                $"Hello! Route values: {string.Join(", ", routeValues)}");
-        });
-
-        RouteBuilder builder = new RouteBuilder(app, defaultHandler);
-
-        builder.MapRoute(
-            "Track Package Route",
-            "package/{operation:regex(^track|create|detonate$)}/{id:int}");
-
-        builder.MapGet("hello/{name}",handler => {
-            object name = handler.GetRouteValue("name");
-            // This is the route handler when HTTP GET "hello/<anything>"  matches
-            // To match HTTP GET "hello/<anything>/<anything>,
-            // use routeBuilder.MapGet("hello/{*name}"
-            return handler.Response.WriteAsync($"Hi, {name}!");
-        });
-
-        return builder;
-    }
-
-    public static IRouteBuilder UseMockServer(this IApplicationBuilder app, RouteHandler defaultHandler)
-    {
-        App = app;
-        return new RouteBuilder(App, defaultHandler);
-    }
-
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockServerConfig config)
     {
         App = app;
@@ -76,52 +45,6 @@ public static class MockServerExtensions
     {
         IRouter routes = builder.Build();
         App.UseRouter(routes);
-    }
-
-    [Obsolete("use the overload: static Task Content(HttpResponse response, Verb verb)", false)]
-    static Task Content(HttpResponse response, object content, string type, Dictionary<string, string> headers, int statusCode = 200)
-    {
-        response.Headers.Add("content-type", type);
-        response.StatusCode = statusCode;
-
-        foreach (var kv in headers)
-        {
-            response.Headers.Add(kv.Key, kv.Value);
-        }
-
-        Task task;
-
-        if (content != null) {
-            response.ContentLength = content.ToString().Length;
-            task = response.WriteAsync(content.ToString());
-        } else
-        {
-            response.ContentLength = 0;
-            task = Task.CompletedTask;
-        }
-
-        return task;
-    }
-
-    [Obsolete("use the overload: static Task Content(HttpResponse response, Verb verb)", false)]
-    static Task Content(HttpResponse response, object content, string type)
-    {
-        response.Headers.Add("content-type", type);
-
-        Task task;
-
-        if (content != null)
-        {
-            response.ContentLength = content.ToString().Length;
-            task = response.WriteAsync(content.ToString());
-        }
-        else
-        {
-            response.ContentLength = 0;
-            task = Task.CompletedTask;
-        }
-
-        return task;
     }
 
     static Task Content(HttpResponse response, MockServerHttpVerb verb)
@@ -167,12 +90,6 @@ public static class MockServerExtensions
         return Json(response, json);
     }
 
-    static Task Json(HttpContext handler, string json)
-    {
-        HttpResponse response = handler.Response;
-        return Json(response, json);
-    }
-
     static Task Json<T>(HttpResponse response, string json)
     {
         response.ContentLength = json.Length;
@@ -212,36 +129,6 @@ public static class MockServerExtensions
         return builder;
     }
 
-    public static IRouteBuilder Post<T>(this IRouteBuilder builder, string url, Func<T> func)
-    {
-        builder.MapPost(url, handler =>
-        {
-            return Json(handler, func);
-        });
-
-        return builder;
-
-    }
-
-    public static IRouteBuilder Get(this IRouteBuilder builder, string url, RequestDelegate handler)
-    {
-        builder.MapGet(url, handler);
-        return builder;
-    }
-
-    public static IRouteBuilder Get<T>(this IRouteBuilder builder, string url, RequestDelegate handler)
-    {
-        builder.MapGet(url, handler);
-        return builder;
-    }
-
-    public static IRouteBuilder Post(this IRouteBuilder builder, string url, RequestDelegate handler)
-    {
-        builder.MapPost(url, handler);
-        return builder;
-    }
-
-    [Obsolete("", false)]
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,
         string template,
@@ -303,8 +190,14 @@ public static class MockServerExtensions
         builder.MapGet(template, (req, resp, route) =>
         {
             string content = gen(req, resp, route);
+        {
+            var verb = new MockServerHttpVerb()
+            {
+                ContentType = contentType,
+                Content = content
+            };
 
-            return Content(resp, content, contentType);
+            return Content(resp, verb);
         });
 
         return builder;
