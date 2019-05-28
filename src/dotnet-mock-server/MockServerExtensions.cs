@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
 
 public static class MockServerExtensions
 {
-    static IApplicationBuilder App { get; set; }
+    private static IApplicationBuilder App { get; set; }
 
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockServerConfig config)
     {
@@ -25,8 +24,19 @@ public static class MockServerExtensions
             {
                 var method = ukv.Key;
                 MockServerHttpVerb verb = ukv.Value;
-
-                routeBuilder.On(method, url, verb);
+                if (!verb.Dynamic)
+                {
+                    routeBuilder.On(method, url, verb);
+                }
+                else
+                {
+                    var content = JsonConvert
+                        .DeserializeObject<IDictionary<string, object>>(verb.Content.ToString(), new JsonConverter[] {
+                            new RecursiveConverter()
+                    });
+                    verb.Content = JsonConvert.SerializeObject(content);
+                    routeBuilder.On(method, url, verb);
+                }
             }
 
         }
@@ -50,7 +60,7 @@ public static class MockServerExtensions
         App.UseRouter(routes);
     }
 
-    static Task Content(HttpResponse response, MockServerHttpVerb verb)
+    private static Task Content(HttpResponse response, MockServerHttpVerb verb)
     {
         response.Headers.Add("content-type", verb.ContentType);
 
@@ -77,23 +87,23 @@ public static class MockServerExtensions
         return task;
     }
 
-    static Task Json<T>(HttpContext handler, Func<T> func)
+    private static Task Json<T>(HttpContext handler, Func<T> func)
     {
         HttpResponse response = handler.Response;
 
         string json = JsonConvert.SerializeObject(func());
-        
+
         return Json(response, json);
     }
 
-    static Task Json<T>(HttpContext handler, T entity)
+    private static Task Json<T>(HttpContext handler, T entity)
     {
         HttpResponse response = handler.Response;
         string json = JsonConvert.SerializeObject(entity);
         return Json(response, json);
     }
 
-    static Task Json<T>(HttpResponse response, T entity)
+    private static Task Json<T>(HttpResponse response, T entity)
     {
         string json = JsonConvert.SerializeObject(entity);
         return Json(response, json);
@@ -128,6 +138,18 @@ public static class MockServerExtensions
         builder.MapVerb(method, template, (req, resp, route) =>
         {
             return Content(resp, verb);
+        });
+
+        return builder;
+    }
+
+    public static IRouteBuilder On(this IRouteBuilder builder,
+        string method,
+        string template, Func<RouteData, string> gen)
+    {
+        builder.MapVerb(method, template, (req, resp, route) =>
+        {
+            return Content(resp,// gen());
         });
 
         return builder;

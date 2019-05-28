@@ -16,5 +16,8 @@ public class MockServerHttpVerb
     [JsonProperty("statusCode")]
     public int StatusCode { get; set; } = (int)HttpStatusCode.OK;
 
+    [JsonProperty("dynamic")]
+    public bool Dynamic { get; set; }
+
     // TODO Use HttpStatusCode enum.
 }

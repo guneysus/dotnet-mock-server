@@ -6,18 +6,16 @@
       },
 
       "contentType": "application/json"
-    },
-    "post": {
-      "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note>  <to>Tove<\/to>  <from>Jani<\/from>  <heading>Reminder<\/heading>  <body>Don't forget me this weekend!<\/body><\/note>",
-      "contentType": "application/xml"
     }
   },
+
   "/xml": {
     "get": {
       "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note>  <to>Tove<\/to>  <from>Jani<\/from>  <heading>Reminder<\/heading>  <body>Don't forget me this weekend!<\/body><\/note>",
       "contentType": "application/xml"
     }
   },
+
   "/api/user": {
     "get": {
       "content": [
@@ -38,18 +36,6 @@
           "createdAt": "2019-05-06T17:00:24.825Z",
           "name": "Adeline Torphy",
           "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg"
-        },
-        {
-          "id": "4",
-          "createdAt": "2019-05-23T14:48:30.194Z",
-          "name": "Edwina Gleichner III",
-          "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/osmanince/128.jpg"
-        },
-        {
-          "id": "5",
-          "createdAt": "2019-05-23T21:40:34.408Z",
-          "name": "Lenna Lind",
-          "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/anthonysukow/128.jpg"
         }
       ]
     }
@@ -65,20 +51,44 @@
       }
     }
   },
+
   "/headers": {
     "get": {
       "content": "Hello",
       "headers": {
-        "foo": "bar"
+        "X-Powered-By": "MockServer.NET"
       }
     }
   },
+
   "/redirect": {
     "get": {
       "headers": {
         "Location": "https://example.com"
       },
-      "statusCode":  301
+      "statusCode": 301
+    }
+  },
+
+  "/fn/guid": {
+    "get": {
+      "content": {
+        "guid": "fn:guid",
+        "phone": "fn:phonenumber",
+        "name": "fn:fullname",
+        "email": "fn:email",
+        "username": "fn:username",
+        "fo": {
+          "bar": 100,
+          "baz": {
+            "lorem": "ipsum",
+            "id": "fn:guid"
+          }
+        }
+      },
+
+      "contentType": "application/json",
+      "dynamic": true
     }
   }
 }
