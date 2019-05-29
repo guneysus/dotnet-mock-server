@@ -2,9 +2,14 @@
 using System.Collections.Generic;
 using System.IO;
 
-[JsonDictionary]
-public partial class MockServerConfig : Dictionary<string, MockServerUrlConfig>
+
+public partial class MockServerConfig
 {
+    [JsonProperty("templates", DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate)]
+    public Dictionary<string, object> Templates { get; set; }
+
+    [JsonProperty("resources")]
+    public Dictionary<string, MockServerUrlConfig> Resources { get; set; }
 
     public static MockServerConfig ReadConfig(string path)
     {
@@ -16,7 +21,7 @@ public partial class MockServerConfig : Dictionary<string, MockServerUrlConfig>
         }
 
         var content = File.ReadAllText(configFileInfo.FullName);
-        var config = JsonConvert.DeserializeObject<MockServerConfig>(content);
+        var config = JsonConvert.DeserializeObject<MockServerConfig>(content, new JsonConverter[] {});
         return config;
     }
 }

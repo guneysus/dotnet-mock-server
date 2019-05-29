@@ -16,7 +16,7 @@ public static class MockServerExtensions
         App = app;
         RouteBuilder routeBuilder = new RouteBuilder(App);
 
-        foreach (KeyValuePair<string, MockServerUrlConfig> kv in config)
+        foreach (KeyValuePair<string, MockServerUrlConfig> kv in config.Resources)
         {
             var url = kv.Key;
             var urlConfig = kv.Value;
@@ -31,28 +31,32 @@ public static class MockServerExtensions
                 }
                 else
                 {
-                    var content = JsonConvert
-                        .DeserializeObject<IDictionary<string, object>>(verb.Content.ToString(), new JsonConverter[] {
-                            new RecursiveConverter()
-                    });
-                    verb.Content = JsonConvert.SerializeObject(content);
-
-                    Func<string> f = () =>
+                    Func<string> gen = () =>
                     {
-                        var ff = JsonConvert
+                        IDictionary<string, object> content = JsonConvert
                             .DeserializeObject<IDictionary<string, object>>(verb.Content.ToString(), new JsonConverter[] {
                             new RecursiveConverter()
                         });
-                        var resp = JsonConvert.SerializeObject(ff);
+
+                        var templateJson = JsonConvert.SerializeObject(content);
+
+                        IDictionary<string, object> template = JsonConvert
+                            .DeserializeObject<IDictionary<string, object>>(templateJson, new JsonConverter[] {
+                                new DynamicJsonConverter()
+                        });
+                        string resp = JsonConvert.SerializeObject(template);
                         return resp;
                     };
-                    routeBuilder.On(method, url, verb.ContentType, f);
+
+                    routeBuilder.On(method, url, verb.ContentType, gen);
                 }
             }
 
         }
 
-        routeBuilder.OnGet("/__config", "application/json", (route) => config);
+        routeBuilder.OnGet("/__config", "application/json", (route) => {
+            return config;
+        });
 
         routeBuilder.BuildAndUseRouter();
 
@@ -117,7 +121,7 @@ public static class MockServerExtensions
     {
         HttpResponse response = handler.Response;
 
-        string json = JsonConvert.SerializeObject(func());
+        string json = JsonConvert.SerializeObject(func(), new JsonConverter[]{ new RecursiveConverter() });
 
         return Json(response, json);
     }
@@ -125,13 +129,13 @@ public static class MockServerExtensions
     private static Task Json<T>(HttpContext handler, T entity)
     {
         HttpResponse response = handler.Response;
-        string json = JsonConvert.SerializeObject(entity);
+        string json = JsonConvert.SerializeObject(entity, new JsonConverter[] { new RecursiveConverter() });
         return Json(response, json);
     }
 
     private static Task Json<T>(HttpResponse response, T entity)
     {
-        string json = JsonConvert.SerializeObject(entity);
+        string json = JsonConvert.SerializeObject(entity, new JsonConverter[] { new RecursiveConverter() });
         return Json(response, json);
     }
 
