@@ -65,6 +65,7 @@
 
     "/api/comment": {
       "get": {
+        "dynamic":  true,
         "content": {
           "$comment": {
             "count": 10
