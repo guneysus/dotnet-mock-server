@@ -22,6 +22,28 @@ public partial class MockServerConfig
 
         var content = File.ReadAllText(configFileInfo.FullName);
         var config = JsonConvert.DeserializeObject<MockServerConfig>(content, new JsonConverter[] {});
+
+        instance = config;
+
         return config;
+    }
+
+    private MockServerConfig()
+    {
+
+    }
+
+    static MockServerConfig instance = null;
+
+    public static MockServerConfig Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                instance = new MockServerConfig();
+            }
+            return instance;
+        }
     }
 }

@@ -1,0 +1,24 @@
+{
+  "templates": {
+    "$comment": {
+      "_id": "fn:guid",
+      "user": {
+        "name": "fn:fullname"
+      },
+      "date": "fn:random.date"
+    }
+  },
+  "resources": {
+
+    "/api/comment": {
+      "get": {
+        "dynamic": true,
+        "content": {
+          "$comment": {
+            "count": 10
+          }
+        }
+      }
+    }
+  }
+}

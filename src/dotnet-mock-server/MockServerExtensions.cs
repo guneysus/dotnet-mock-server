@@ -33,18 +33,8 @@ public static class MockServerExtensions
                 {
                     Func<string> gen = () =>
                     {
-                        IDictionary<string, object> content = JsonConvert
-                            .DeserializeObject<IDictionary<string, object>>(verb.Content.ToString(), new JsonConverter[] {
-                            new RecursiveConverter()
-                        });
+                        string resp = JsonConvert.SerializeObject(CompileTemplate(verb.Content.ToString()));
 
-                        var templateJson = JsonConvert.SerializeObject(content);
-
-                        IDictionary<string, object> template = JsonConvert
-                            .DeserializeObject<IDictionary<string, object>>(templateJson, new JsonConverter[] {
-                                new DynamicJsonConverter()
-                        });
-                        string resp = JsonConvert.SerializeObject(template);
                         return resp;
                     };
 
@@ -54,13 +44,21 @@ public static class MockServerExtensions
 
         }
 
-        routeBuilder.OnGet("/__config", "application/json", (route) => {
+        routeBuilder.OnGet("/__config", "application/json", (route) =>
+        {
             return config;
         });
 
         routeBuilder.BuildAndUseRouter();
 
         return routeBuilder;
+    }
+
+    public static IDictionary<string, object> CompileTemplate(string template)
+    {
+        return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
+            new DynamicJsonConverter()
+        });
     }
 
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app)
@@ -121,7 +119,7 @@ public static class MockServerExtensions
     {
         HttpResponse response = handler.Response;
 
-        string json = JsonConvert.SerializeObject(func(), new JsonConverter[]{ new RecursiveConverter() });
+        string json = JsonConvert.SerializeObject(func(), new JsonConverter[] { new RecursiveConverter() });
 
         return Json(response, json);
     }

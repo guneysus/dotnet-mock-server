@@ -25,17 +25,49 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
 
     public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
     {
-        if (reader.TokenType == JsonToken.StartObject
-            || reader.TokenType == JsonToken.Null)
+
+        if (reader.Path.StartsWith("$") && (reader.TokenType == JsonToken.StartObject || reader.TokenType == JsonToken.Null))
         {
-            return base.ReadJson(reader, objectType, existingValue, serializer);
+
+            // TODO Refactor this.
+            // Create a method DynamicCompile -> template to JSON
+
+            object o = base.ReadJson(reader, objectType, existingValue, serializer);
+            Dictionary<string, object> t = ((IEnumerable<KeyValuePair<string, object>>)o).ToDictionary(kv => kv.Key, kv => kv.Value);
+
+            var count = Convert.ToInt32(t.GetValueOrDefault("count", 0));
+            var templateName = reader.Path;
+            object template = MockServerConfig.Instance.Templates[templateName];
+
+            var items = new List<object>();
+
+            for (int i = 0; i < count; i++)
+            {
+                var item = MockServerExtensions.CompileTemplate(template.ToString());
+
+                items.Add(item);
+            }
+
+
+            return items;
+        }
+
+        if (reader.TokenType == JsonToken.StartObject || reader.TokenType == JsonToken.Null)
+        {
+            object o = base.ReadJson(reader, objectType, existingValue, serializer);
+            return o;
         }
 
         // if the next token is not an object
         // then fall back on standard deserializer (strings, numbers etc.)
         object obj = serializer.Deserialize(reader);
-        object str = Parse(obj);
-        return str;
+        object val = Parse(obj);
+        return val;
+    }
+
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+    {
+        base.WriteJson(writer, value, serializer);
     }
 
     protected object Parse(object obj)
@@ -78,4 +110,23 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
             return null;
         }) }
     };
+}
+
+
+//{
+//          "$comment": {
+//            "count": 10
+//          }
+
+
+[JsonDictionary]
+public class MockArrayExpression : Dictionary<string, MockArrayExpression>
+{
+
+}
+
+public class MockArrayExpressionMeta
+{
+    [JsonProperty("count")]
+    public int Count { get; set; }
 }

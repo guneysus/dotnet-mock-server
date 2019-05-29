@@ -1,8 +1,11 @@
 {
   "templates": {
-    "$user": {
+    "$comment": {
       "_id": "fn:guid",
-      "email":  "fn:email"
+      "user": {
+        "name": "fn:fullname"
+      },
+      "date":  "fn:random.date"
     }
   },
   "resources": {
@@ -48,7 +51,6 @@
       }
     },
 
-
     "/api/user/{id:int}": {
       "get": {
         "content": {
@@ -61,20 +63,15 @@
       }
     },
 
-
-    "/api/user/3": {
+    "/api/comment": {
       "get": {
         "content": {
-          "id": "3",
-          "createdAt": "2019-05-06T19:32:07.034Z",
-          "name": "fn:name",
-          "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
-        },
-        "dynamic": true
+          "$comment": {
+            "count": 10
+          }
+        }
       }
     },
-
-
 
     "/headers": {
       "get": {
