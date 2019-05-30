@@ -48,7 +48,6 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
                 items.Add(item);
             }
 
-
             return items;
         }
 

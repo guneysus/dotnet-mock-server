@@ -54,7 +54,7 @@
     "/api/user/{id:int}": {
       "get": {
         "content": {
-          "id": "$query.id",
+          "id": "fn:random.numeric",
           "createdAt": "fn:random.date",
           "name": "fn:fullname",
           "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
