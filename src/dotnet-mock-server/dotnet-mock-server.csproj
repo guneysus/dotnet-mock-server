@@ -63,6 +63,7 @@
     <StartupObject>dotnet_mock_server.Program</StartupObject>
        <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
        <ApplicationIcon />
+       <Version>1.0.1</Version>
   </PropertyGroup>
 
 
