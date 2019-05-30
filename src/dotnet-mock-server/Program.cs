@@ -10,7 +10,6 @@ namespace dotnet_mock_server
 {
     public class Program
     {
-        private const string TEMPLATE_FILE_NAME = "configTemplate.json";
         private const string CONFIG_FILE_NAME = "mockServer.json";
 
         public static void Main(string[] args)
@@ -25,7 +24,7 @@ namespace dotnet_mock_server
 
 
             var defaultConfigFileFullPath = Path.Join(Directory.GetCurrentDirectory(), CONFIG_FILE_NAME);
-            var templateConfigFileFullPath = Path.Join(AppContext.BaseDirectory, TEMPLATE_FILE_NAME);
+
 
             var configOption = new Option(
                 "--config",
@@ -58,7 +57,7 @@ namespace dotnet_mock_server
 
                 if (generateConfig)
                 {
-                    File.Copy(templateConfigFileFullPath, config, overwrite: true);
+                    MockServerConfig.GenerateDefaultConfig(config);
                 }
             });
 
