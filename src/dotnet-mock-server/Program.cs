@@ -19,7 +19,7 @@ namespace dotnet_mock_server
             // Create some options and a parser
             var generateConfigOption = new Option(
                 "--generate-config",
-                "An option whose argument is parsed as an int",
+                "To generate an example `mockServer.json` config, pass this parameter",
                 new Argument<bool>(defaultValue: false));
 
 
@@ -28,7 +28,7 @@ namespace dotnet_mock_server
 
             var configOption = new Option(
                 "--config",
-                "An option whose argument is parsed as an int",
+                "Config file path",
                 new Argument<string>(defaultConfigFileFullPath));
 
             // Add them to the root command
@@ -59,19 +59,21 @@ namespace dotnet_mock_server
                 {
                     MockServerConfig.GenerateDefaultConfig(config);
                 }
+
+
+                #endregion
+
+                #region web
+                IWebHostBuilder webHostBuilder = CreateWebHostBuilder(args);
+                IWebHost webHost = webHostBuilder.Build();
+
+                webHost.Run();
+                #endregion
+
             });
 
             // Parse the incoming args and invoke the handler
             rootCommand.InvokeAsync(args).Wait();
-
-            #endregion
-
-            #region web
-            IWebHostBuilder webHostBuilder = CreateWebHostBuilder(args);
-            IWebHost webHost = webHostBuilder.Build();
-
-            webHost.Run();
-            #endregion
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)

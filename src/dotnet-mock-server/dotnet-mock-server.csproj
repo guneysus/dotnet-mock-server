@@ -63,13 +63,15 @@
     <StartupObject>dotnet_mock_server.Program</StartupObject>
        <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
        <ApplicationIcon />
-       <Version>1.0.2</Version>
+       <Version>1.0.4</Version>
        <NeutralLanguage>en-US</NeutralLanguage>
        <RepositoryUrl>https://github.com/guneysus/mock-server</RepositoryUrl>
        <RepositoryType>git</RepositoryType>
        <PackageTags>dotnetcore dotnetcore21 global-tool</PackageTags>
        <PackageProjectUrl>https://github.com/guneysus/mock-server/</PackageProjectUrl>
        <Description>declarative mock server with fake data generation capabilities.</Description>
+       <AssemblyVersion>1.0.4.0</AssemblyVersion>
+       <FileVersion>1.0.4.0</FileVersion>
   </PropertyGroup>
 
 
