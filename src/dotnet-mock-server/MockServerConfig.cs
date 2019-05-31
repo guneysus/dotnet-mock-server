@@ -33,7 +33,8 @@ public partial class MockServerConfig
         if (!File.Exists(path))
         {
             GenerateDefaultConfig(path);
-            return new FileInfo(path);
+            FileInfo fileInfo = new FileInfo(path);
+            return fileInfo;
             //throw new FileNotFoundException("Config file is not found", configFileInfo.FullName);
         }
 

@@ -8,16 +8,27 @@
       "date": "fn:random.date"
     }
   },
+
   "resources": {
+    "/api/comment/{id:int}": {
+      "get": {
+        "contentType": "application/json",
+        "dynamic": true,
+        "content": {
+          "_id": "fn:guid",
+          "user": {
+            "name": "fn:fullname"
+          },
+          "date": "fn:random.date"
+        }
+      }
+    },
 
     "/api/comment": {
       "get": {
+        "contentType": "application/json",
         "dynamic": true,
-        "content": {
-          "$comment": {
-            "count": 10
-          }
-        }
+        "content": "$comment"
       }
     }
   }

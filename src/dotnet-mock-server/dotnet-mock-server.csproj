@@ -18,14 +18,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="dev.json" />
     <None Remove="mockServer.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="dev.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="mockServer.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -52,6 +48,9 @@
   <ItemGroup>
     <None Update="configTemplate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="dev.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

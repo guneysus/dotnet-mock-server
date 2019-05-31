@@ -103,8 +103,6 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
         {"fn:random.alpha", new Func<object>(()=> Faker.StringFaker.Alpha(5) ) },
         {"fn:random.alphaNumeric", new Func<object>(()=> Faker.StringFaker.AlphaNumeric(5) ) },
         {"fn:random.numeric", new Func<object>(()=> Faker.StringFaker.Numeric(8) ) },
-        {"fn:random.pattern", new Func<object>(()=> Faker.StringFaker.Randomize("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")) },
-
         {"fn:null", new Func<object>(() => {
             return null;
         }) }
