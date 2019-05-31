@@ -30,6 +30,15 @@
         "dynamic": true,
         "content": "$comment"
       }
+    },
+    "/download": {
+      "get": {
+        "contentType": "application/octet-stream",
+        "content": "Hello world",
+        "headers": {
+          "content-disposition":  "attachment; filename=hello.txt"
+        }
+      }
     }
   }
 }

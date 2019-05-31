@@ -361,6 +361,26 @@ And will be used in resources section like this:
 ```
 or "content": "$comment * N"` which N is a positive number.
 
+
+Downloading a file 
+
+```json
+{
+  "resources": {
+    "/download": {
+      "get": {
+        "contentType": "application/octet-stream",
+        "content": "Hello world",
+        "headers": {
+          "content-disposition":  "attachment; filename=hello.txt"
+        }
+      }
+    }
+  }
+}
+```
+
+
 ---
 ## Related projects
 - There is also many projects generates mock APIs from Swagger or RAML files.
