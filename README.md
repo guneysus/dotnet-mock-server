@@ -363,7 +363,9 @@ or "content": "$comment * N"` which N is a positive number.
 
 ---
 ## Related projects
-- There is also many projects generates mock APIs from Swagger or RAML files.
+- https://github.com/stoplightio/prism
+
+There is also many projects generates mock APIs from Swagger or RAML files.
 
 ---
 
