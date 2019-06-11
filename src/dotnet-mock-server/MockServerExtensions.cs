@@ -78,7 +78,7 @@ public static class MockServerExtensions
     {
         Func<IDictionary<string, object>> f;
 
-        if (Generators.TryGetValue(template, out f))
+        if (template.StartsWith("@") && Generators.TryGetValue(template, out f))
         {
             return f();
         }

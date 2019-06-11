@@ -128,8 +128,8 @@ namespace dotnet_mock_server.tests
             Assert.NotNull(comment);
             Assert.NotEqual(Guid.Empty, comment.Id);
 
-            Assert.NotEqual("fn:lorem.sentence", comment.Title);
-            Assert.NotEqual("fn:lorem.paragraph", comment.Text);
+            Assert.NotEqual("$lorem.sentence", comment.Title);
+            Assert.NotEqual("$lorem.paragraph", comment.Text);
 
         }
 
@@ -145,8 +145,8 @@ namespace dotnet_mock_server.tests
             Assert.NotNull(comment);
             Assert.NotEqual(Guid.Empty, comment.Id);
 
-            Assert.NotEqual("fn:lorem.sentence", comment.Title);
-            Assert.NotEqual("fn:lorem.paragraph", comment.Text);
+            Assert.NotEqual("$lorem.sentence", comment.Title);
+            Assert.NotEqual("$lorem.paragraph", comment.Text);
 
         }
     }
@@ -214,8 +214,9 @@ namespace dotnet_mock_server.tests
         public string Country { get; set; }
 
         [JsonProperty("zipcode")]
-        [JsonConverter(typeof(ParseStringConverter))]
-        public long Zipcode { get; set; }
+        //[JsonConverter(typeof(ParseStringConverter))]
+        //public long Zipcode { get; set; }
+        public string Zipcode { get; set; }
 
         [JsonProperty("street")]
         public string Street { get; set; }
@@ -279,7 +280,10 @@ namespace dotnet_mock_server.tests
             {
                 return l;
             }
-            throw new Exception("Cannot unmarshal type long");
+
+            return value;
+
+            //throw new Exception("Cannot unmarshal type long");
         }
 
         public override void WriteJson(JsonWriter writer, object untypedValue, JsonSerializer serializer)

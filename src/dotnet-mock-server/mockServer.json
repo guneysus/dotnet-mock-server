@@ -1,6 +1,6 @@
 {
   "templates": {
-    "$comment": {
+    "@comment": {
       "_id": "$guid",
       "user": {
         "name": "$fullname"
@@ -9,8 +9,8 @@
       "text": "$lorem.paragraph",
       "date": "$random.date"
     },
-    "$comments": {
-      "data": "$comment*10"
+    "@comments": {
+      "data": "@comment*10"
     }
   },
   "resources": {
@@ -70,19 +70,15 @@
 
     "/api/comment/{id:int}": {
       "get": {
-        "dynamic":  true,
-        "content": "$comment"
+        "dynamic": true,
+        "content": "@comment"
       }
     },
 
     "/api/comment": {
       "get": {
         "dynamic": true,
-        "content": {
-          "$comment": {
-            "count": 10
-          }
-        }
+        "content": "@comment * 10"
       }
     },
 
