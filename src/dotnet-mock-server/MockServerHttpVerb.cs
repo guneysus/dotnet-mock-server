@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -17,6 +18,7 @@ public class MockServerHttpVerb
     public int StatusCode { get; set; } = (int)HttpStatusCode.OK;
 
     [JsonProperty("dynamic")]
+    [Obsolete("Will be removed", false)]
     public bool Dynamic { get; set; }
 
     // TODO Use HttpStatusCode enum.

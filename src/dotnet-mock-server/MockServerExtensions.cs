@@ -11,10 +11,28 @@ public static class MockServerExtensions
 {
     private static IApplicationBuilder App { get; set; }
 
+    public static IDictionary<string, Func<IDictionary<string, object>>> Generators { get; private set; } = new Dictionary<string, Func<IDictionary<string, object>>>();
+
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app, MockServerConfig config)
     {
         App = app;
         RouteBuilder routeBuilder = new RouteBuilder(App);
+
+        foreach (KeyValuePair<string, object> item in config.Templates)
+        {
+            var name = item.Key;
+            var template = item.Value.ToString();
+
+            Generators[name] = () =>
+            {
+                IDictionary<string, object> compiled = CompileTemplate(template);
+                return compiled;
+            };
+
+            //IDictionary<string, object> sample = Generators[name]();
+
+            //var json = JsonConvert.SerializeObject(sample);
+        }
 
         foreach (KeyValuePair<string, MockServerUrlConfig> kv in config.Resources)
         {
@@ -25,12 +43,9 @@ public static class MockServerExtensions
             {
                 var method = ukv.Key;
                 MockServerHttpVerb verb = ukv.Value;
-                if (!verb.Dynamic)
+                if (verb.Dynamic)
                 {
-                    routeBuilder.On(method, url, verb);
-                }
-                else
-                {
+
                     Func<string> gen = () =>
                     {
                         string resp = JsonConvert.SerializeObject(CompileTemplate(verb.Content.ToString()));
@@ -39,6 +54,11 @@ public static class MockServerExtensions
                     };
 
                     routeBuilder.On(method, url, verb.ContentType, gen);
+
+                }
+                else
+                {
+                    routeBuilder.On(method, url, verb);
                 }
             }
 
@@ -56,6 +76,13 @@ public static class MockServerExtensions
 
     public static IDictionary<string, object> CompileTemplate(string template)
     {
+        Func<IDictionary<string, object>> f;
+
+        if (Generators.TryGetValue(template, out f))
+        {
+            return f();
+        }
+
         return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
             new DynamicJsonConverter()
         });

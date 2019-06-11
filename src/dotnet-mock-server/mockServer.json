@@ -1,11 +1,16 @@
 {
   "templates": {
     "$comment": {
-      "_id": "fn:guid",
+      "_id": "$guid",
       "user": {
-        "name": "fn:fullname"
+        "name": "$fullname"
       },
-      "date":  "fn:random.date"
+      "title": "$lorem.sentence",
+      "text": "$lorem.paragraph",
+      "date": "$random.date"
+    },
+    "$comments": {
+      "data": "$comment*10"
     }
   },
   "resources": {
@@ -54,18 +59,25 @@
     "/api/user/{id:int}": {
       "get": {
         "content": {
-          "id": "fn:random.numeric",
-          "createdAt": "fn:random.date",
-          "name": "fn:fullname",
+          "id": "$random.numeric",
+          "createdAt": "$random.date",
+          "name": "$fullname",
           "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
         },
         "dynamic": true
       }
     },
 
-    "/api/comment": {
+    "/api/comment/{id:int}": {
       "get": {
         "dynamic":  true,
+        "content": "$comment"
+      }
+    },
+
+    "/api/comment": {
+      "get": {
+        "dynamic": true,
         "content": {
           "$comment": {
             "count": 10
@@ -95,35 +107,35 @@
     "/fake/comment/{id:int}": {
       "get": {
         "content": {
-          "_id": "fn:guid",
-          "title": "fn:lorem.sentence",
-          "text": "fn:lorem.paragraph",
+          "_id": "$guid",
+          "title": "$lorem.sentence",
+          "text": "$lorem.paragraph",
           "user": {
-            "_id": "fn:guid",
-            "birthDate": "fn:date.birth",
-            "name": "fn:name",
-            "fullname": "fn:fullname",
-            "phone": "fn:phoneNumber",
-            "email": "fn:email",
-            "username": "fn:userName",
+            "_id": "$guid",
+            "birthDate": "$date.birth",
+            "name": "$name",
+            "fullname": "$fullname",
+            "phone": "$phoneNumber",
+            "email": "$email",
+            "username": "$userName",
             "company": {
-              "_id": "fn:guid",
+              "_id": "$guid",
               "address": {
-                "city": "fn:address.city",
-                "country": "fn:address.country",
-                "zipcode": "fn:address.zipcode",
-                "street": "fn:address.streetName",
-                "streetAddress": "fn:address.streetAddress"
+                "city": "$address.city",
+                "country": "$address.country",
+                "zipcode": "$address.zipcode",
+                "street": "$address.streetName",
+                "streetAddress": "$address.streetAddress"
               }
             },
             "random": {
-              "number": "fn:random.number",
-              "date": "fn:random.date",
-              "bool": "fn:random.bool",
-              "alpha": "fn:random.alpha",
-              "alphaNumeric": "fn:random.alphaNumeric",
-              "numeric": "fn:random.numeric",
-              "pattern": "fn:random.pattern"
+              "number": "$random.number",
+              "date": "$random.date",
+              "bool": "$random.bool",
+              "alpha": "$random.alpha",
+              "alphaNumeric": "$random.alphaNumeric",
+              "numeric": "$random.numeric",
+              "pattern": "$random.pattern"
             }
           }
         },

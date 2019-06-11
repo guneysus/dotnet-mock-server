@@ -116,6 +116,23 @@ namespace dotnet_mock_server.tests
             Assert.NotEqual(Guid.Empty, comments.First().Id);
         }
 
+        [Fact(DisplayName = "/api/comment/9999")]
+        public async Task get_single_comment()
+        {
+            var response = await client.GetAsync("/api/comment/9999");
+            response.EnsureSuccessStatusCode();
+
+            var body = await response.Content.ReadAsStringAsync();
+            var comment = JsonConvert.DeserializeObject<Comment>(body);
+
+            Assert.NotNull(comment);
+            Assert.NotEqual(Guid.Empty, comment.Id);
+
+            Assert.NotEqual("fn:lorem.sentence", comment.Title);
+            Assert.NotEqual("fn:lorem.paragraph", comment.Text);
+
+        }
+
         [Fact(DisplayName = "/fake/comment/1000")]
         public async Task get_fake_comment()
         {
