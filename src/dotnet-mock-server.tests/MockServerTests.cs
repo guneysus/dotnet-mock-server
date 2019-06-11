@@ -110,10 +110,11 @@ namespace dotnet_mock_server.tests
 
 
             var body = await response.Content.ReadAsStringAsync();
-            var comments = JsonConvert.DeserializeObject<IEnumerable<Comment>>(body);
+            
+            var data = JsonConvert.DeserializeObject<RestArrayData<Comment>>(body);
 
-            Assert.NotEmpty(comments);
-            Assert.NotEqual(Guid.Empty, comments.First().Id);
+            Assert.NotEmpty(data.Objects);
+            Assert.NotEqual(Guid.Empty, data.Objects.First().Id);
         }
 
         [Fact(DisplayName = "/api/comment/9999")]
@@ -300,4 +301,10 @@ namespace dotnet_mock_server.tests
 
         public static readonly ParseStringConverter Singleton = new ParseStringConverter();
     }
+}
+
+
+public class RestArrayData<T>
+{
+    public IEnumerable<T> Objects { get; set; }
 }

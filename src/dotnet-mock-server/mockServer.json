@@ -10,7 +10,7 @@
       "date": "$random.date"
     },
     "@comments": {
-      "data": "@comment*10"
+      "data": "fn::@comment * 10"
     }
   },
   "resources": {
@@ -35,19 +35,19 @@
       "get": {
         "content": [
           {
-            "id": "1",
+            "id": "100",
             "createdAt": "2019-05-06T19:32:07.034Z",
             "name": "Rosario Beier",
             "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
           },
           {
-            "id": "2",
+            "id": "200",
             "createdAt": "2019-05-07T10:28:32.699Z",
             "name": "Rocio Gibson DVM",
             "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/SlaapMe/128.jpg"
           },
           {
-            "id": "3",
+            "id": "300",
             "createdAt": "2019-05-06T17:00:24.825Z",
             "name": "Adeline Torphy",
             "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg"
@@ -78,7 +78,7 @@
     "/api/comment": {
       "get": {
         "dynamic": true,
-        "content": "@comment * 10"
+        "content": "fn::@comment * 10"
       }
     },
 

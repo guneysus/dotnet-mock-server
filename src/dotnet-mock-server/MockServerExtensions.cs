@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Routing;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -76,16 +77,62 @@ public static class MockServerExtensions
 
     public static IDictionary<string, object> CompileTemplate(string template)
     {
-        Func<IDictionary<string, object>> f;
-
-        if (template.StartsWith("@") && Generators.TryGetValue(template, out f))
+        if (template.StartsWith("$"))
         {
-            return f();
+            return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
+                new DynamicJsonConverter()
+            });
+        }
+
+        if (template.StartsWith("fn::"))
+        {
+            var trimmedTemplate = template.Replace("fn::", string.Empty);
+
+            var tokens = trimmedTemplate.Split(' ').Select(x => x.Trim());
+
+            return CompileTokens(tokens);
+        }
+
+        if (template.StartsWith("@"))
+        {
+            return Generators[template]();
         }
 
         return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
-            new DynamicJsonConverter()
+                new DynamicJsonConverter()
         });
+    }
+
+    private static IDictionary<string, object> CompileTokens(IEnumerable<string> tokens)
+    {
+        switch (tokens.Count())
+        {
+            case 0:
+                throw new NotImplementedException();
+            case 1:
+                return Generators[tokens.First()]();
+            case 2:
+                throw new NotImplementedException();
+            case 3:// var exp when tokens.Count() > 2:
+                {
+                    var tokenList = tokens.ToList();
+                    string template = tokens.Where(x => x.StartsWith("@")).Single();
+                    string @operator = tokens.Where(x => new string[] { "*" }.Contains(x)).Single();
+                    var count = int.Parse(tokenList.ElementAt(tokenList.IndexOf(@operator) + 1));
+
+                    var it = Enumerable.Range(1, count).Select(x => CompileTemplate(template));
+
+                    string json = JsonConvert.SerializeObject(it);
+                    //IDictionary<string, object> response = JsonConvert.DeserializeObject<IDictionary<string, object>>(json);
+                    return new Dictionary<string, object> {
+                        { "objects", it }
+                    };
+                }
+            default:
+                throw new NotImplementedException();
+        }
+
+        throw new NotImplementedException();
     }
 
     public static IRouteBuilder UseMockServer(this IApplicationBuilder app)
