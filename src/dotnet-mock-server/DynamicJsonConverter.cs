@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -10,6 +13,17 @@ using System.Linq;
 /// </summary>
 public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, object>>
 {
+    private readonly HttpRequest httpRequest;
+    private readonly HttpResponse httpResponse;
+    private readonly RouteData routeData;
+
+    public DynamicJsonConverter(HttpRequest httpRequest, HttpResponse httpResponse, RouteData routeData)
+    {
+        this.httpRequest = httpRequest;
+        this.httpResponse = httpResponse;
+        this.routeData = routeData;
+    }
+
     public override IDictionary<string, object> Create(Type objectType)
     {
         return new Dictionary<string, object>();
@@ -71,9 +85,34 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
 
     protected object Parse(object obj)
     {
+        string key = obj.ToString();
+
+        if (key == "$request.headers")
+        {
+            return httpRequest.Headers.ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        if (key == "$request.params")
+        {
+            return httpRequest.Query.ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        if (key == "$request.form")
+        {
+            //if (httpRequest.Form == null)
+            //{
+            //    httpResponse.ContentType = "text";
+
+            //    return new Dictionary<string, string>();
+            //}
+
+            return httpRequest.Form.ToDictionary(x => x.Key, x => x.Value);
+        }
+
+
         Func<object> fn;
 
-        if (Fn.TryGetValue(obj.ToString(), out fn))
+        if (Fn.TryGetValue(key, out fn))
         {
             return fn();
         }

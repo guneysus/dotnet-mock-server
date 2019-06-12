@@ -19,6 +19,8 @@ public static class MockServerExtensions
         App = app;
         RouteBuilder routeBuilder = new RouteBuilder(App);
 
+        config.Templates = config.Templates ?? new Dictionary<string, object>();
+
         foreach (KeyValuePair<string, object> item in config.Templates)
         {
             var name = item.Key;
@@ -47,14 +49,14 @@ public static class MockServerExtensions
                 if (verb.Dynamic)
                 {
 
-                    Func<string> gen = () =>
+                    Func<HttpRequest, HttpResponse, RouteData, Task> handler = async (req, resp, route) =>
                     {
-                        string resp = JsonConvert.SerializeObject(CompileTemplate(verb.Content.ToString()));
+                        string content = JsonConvert.SerializeObject(CompileTemplate(verb.Content.ToString(), req, resp, route));
 
-                        return resp;
+                        await resp.WriteAsync(content); ;
                     };
 
-                    routeBuilder.On(method, url, verb.ContentType, gen);
+                    routeBuilder.On(method, url, verb.ContentType, handler);
 
                 }
                 else
@@ -75,12 +77,15 @@ public static class MockServerExtensions
         return routeBuilder;
     }
 
-    public static IDictionary<string, object> CompileTemplate(string template)
+    public static IDictionary<string, object> CompileTemplate(string template,
+        HttpRequest httpRequest = null,
+        HttpResponse httpResponse = null,
+        RouteData routeData = null)
     {
         if (template.StartsWith("$"))
         {
             return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
-                new DynamicJsonConverter()
+                new DynamicJsonConverter(httpRequest, httpResponse, routeData)
             });
         }
 
@@ -99,7 +104,7 @@ public static class MockServerExtensions
         }
 
         return JsonConvert.DeserializeObject<IDictionary<string, object>>(template, new JsonConverter[] {
-                new DynamicJsonConverter()
+                new DynamicJsonConverter(httpRequest, httpResponse, routeData)
         });
     }
 
@@ -211,6 +216,7 @@ public static class MockServerExtensions
         return Json(response, json);
     }
 
+    [Obsolete("", true)]
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,
         string template,
@@ -232,6 +238,31 @@ public static class MockServerExtensions
 
         return builder;
     }
+
+    public static IRouteBuilder On(this IRouteBuilder builder,
+        string method,
+        string template,
+        string contentType,
+        Func<HttpRequest, HttpResponse, RouteData, Task> gen, Dictionary<string, string> headers = null, int statusCode = 200)
+    {
+        //var verb = new MockServerHttpVerb()
+        //{
+        //    Content = gen(null, null, null), // TODO
+        //    ContentType = contentType,
+        //    Headers = headers ?? new Dictionary<string, string>(),
+        //    StatusCode = statusCode
+        //};
+
+        builder.MapVerb(method, template, gen);
+
+        //builder.MapVerb(method, template, (req, resp, route) =>
+        //{
+        //    return Content(resp, verb);
+        //});
+
+        return builder;
+    }
+
 
     public static IRouteBuilder On(this IRouteBuilder builder,
         string method,

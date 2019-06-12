@@ -1,42 +1,12 @@
 {
-  "templates": {
-    "$comment": {
-      "_id": "fn:guid",
-      "user": {
-        "name": "fn:fullname"
-      },
-      "date": "fn:random.date"
-    }
-  },
-
   "resources": {
-    "/api/comment/{id:int}": {
-      "get": {
-        "contentType": "application/json",
+    "/request": {
+      "post": {
         "dynamic": true,
         "content": {
-          "_id": "fn:guid",
-          "user": {
-            "name": "fn:fullname"
-          },
-          "date": "fn:random.date"
-        }
-      }
-    },
-
-    "/api/comment": {
-      "get": {
-        "contentType": "application/json",
-        "dynamic": true,
-        "content": "$comment"
-      }
-    },
-    "/download": {
-      "get": {
-        "contentType": "application/octet-stream",
-        "content": "Hello world",
-        "headers": {
-          "content-disposition":  "attachment; filename=hello.txt"
+          "headers": "$request.headers",
+          "params": "$request.params",
+          "form": "$request.form"
         }
       }
     }

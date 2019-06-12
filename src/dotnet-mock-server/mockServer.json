@@ -31,6 +31,16 @@
       }
     },
 
+    "/download": {
+      "get": {
+        "contentType": "application/octet-stream",
+        "content": "Hello world",
+        "headers": {
+          "content-disposition": "attachment; filename=hello.txt"
+        }
+      }
+    },
+
     "/api/user": {
       "get": {
         "content": [
@@ -138,6 +148,17 @@
 
         "contentType": "application/json",
         "dynamic": true
+      }
+    },
+
+    "/request": {
+      "post": {
+        "dynamic": true,
+        "content": {
+          "headers": "$request.headers",
+          "params": "$request.params",
+          "form": "$request.form"
+        }
       }
     }
   }
