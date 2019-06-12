@@ -1,6 +1,6 @@
 # mock-server
 
-declarative mock server with fake data generation capabilities.
+declarative mock server with fake data generation capabilities for .NET Core 2.1
 
 this project started after meeting https://github.com/gencebay and learning his cool project https://github.com/gencebay/httplive
 
@@ -383,7 +383,9 @@ Downloading a file
 
 ---
 ## Related projects
-- There is also many projects generates mock APIs from Swagger or RAML files.
+- https://github.com/stoplightio/prism
+
+There is also many projects generates mock APIs from Swagger or RAML files.
 
 ---
 
