@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Formatting;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
@@ -154,16 +155,26 @@ namespace dotnet_mock_server.tests
         public async Task request_instrospection()
         {
             client.DefaultRequestHeaders.Add("X-Foo", "Bar");
-            var httpResponseMessage = await client.PostAsJsonAsync("/request?result=ok", new { id = 100, email = "lorem@example.com" });
+
+
+            var form = new Dictionary<string, string>() {
+                    {"foo", "bar" }
+                };
+
+            var content = new FormUrlEncodedContent(form.ToList());
+
+            var httpResponseMessage = await client.PostAsync("/request/3444?result=ok", content); 
+
             httpResponseMessage.EnsureSuccessStatusCode();
 
             var body = await httpResponseMessage.Content.ReadAsStringAsync();
             var response = JsonConvert.DeserializeObject<RequestInstrospectionResponse>(body);
 
             Assert.NotNull(response);
-            Assert.NotEqual(default(Dictionary<string, string>), response.Headers);
-            Assert.NotEqual(default(Dictionary<string, string>), response.Params);
-            Assert.NotEqual(default(Dictionary<string, string>), response.Form);
+            Assert.NotEqual(default(Dictionary<string, IEnumerable<string>>), response.Headers);
+            Assert.NotEqual(default(Dictionary<string, IEnumerable<string>>), response.Query);
+            Assert.NotEqual(default(Dictionary<string, IEnumerable<string>>), response.Form);
+            Assert.NotEqual(default(Dictionary<string, string>), response.Route);
 
         }
     }

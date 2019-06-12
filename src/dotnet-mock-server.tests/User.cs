@@ -37,12 +37,16 @@ namespace dotnet_mock_server.tests
     public class RequestInstrospectionResponse
     {
         [JsonProperty("headers")]
-        public IDictionary<string, string> Headers { get; set; }
+        public IDictionary<string, IEnumerable<string>> Headers { get; set; }
 
-        [JsonProperty("params")]
-        public IDictionary<string, string> Params { get; set; }
+        [JsonProperty("query")]
+        public IDictionary<string, IEnumerable<string>> Query { get; set; }
 
         [JsonProperty("form")]
-        public IDictionary<string, string> Form { get; set; }
+        public IDictionary<string, IEnumerable<string>> Form { get; set; }
+
+        [JsonProperty("route")]
+        public IDictionary<string, string> Route { get; set; }
+
     }
 }

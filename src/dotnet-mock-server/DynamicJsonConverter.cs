@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
@@ -92,7 +91,7 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
             return httpRequest.Headers.ToDictionary(x => x.Key, x => x.Value);
         }
 
-        if (key == "$request.params")
+        if (key == "$request.query")
         {
             return httpRequest.Query.ToDictionary(x => x.Key, x => x.Value);
         }
@@ -109,6 +108,28 @@ public class DynamicJsonConverter : CustomCreationConverter<IDictionary<string, 
             return httpRequest.Form.ToDictionary(x => x.Key, x => x.Value);
         }
 
+        if (key == "$route")
+        {
+            return routeData.Values.ToDictionary(x => x.Key, x => x.Value);
+        }
+
+        if (key.StartsWith("$request.form."))
+        {
+            var propName = key.Replace("$request.form.", string.Empty);
+            return httpRequest.Form[propName];
+        }
+
+        if (key.StartsWith("$route."))
+        {
+            var propName = key.Replace("$route.", string.Empty);
+            return routeData.Values[propName];
+        }
+
+        if (key.StartsWith("$request.query."))
+        {
+            var propName = key.Replace("$request.query.", string.Empty);
+            return httpRequest.Query[propName];
+        }
 
         Func<object> fn;
 

@@ -1,12 +1,16 @@
 {
   "resources": {
-    "/request": {
+    "/request/{id:int}": {
       "post": {
         "dynamic": true,
         "content": {
           "headers": "$request.headers",
-          "params": "$request.params",
-          "form": "$request.form"
+          "query": "$request.query",
+          "form": "$request.form",
+          "route": "$route",
+          "formFoo": "$request.form.foo",
+          "routeId": "$route.id",
+          "queryResult": "$request.query.result"
         }
       }
     }
