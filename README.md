@@ -1,5 +1,7 @@
 # mock-server
 
+[![Join the chat at https://gitter.im/dotnetcore-mock-server/community](https://badges.gitter.im/dotnetcore-mock-server/community.svg)](https://gitter.im/dotnetcore-mock-server/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 declarative mock server with fake data generation capabilities for .NET Core 2.1
 
 this project started after meeting https://github.com/gencebay and learning his cool project https://github.com/gencebay/httplive
