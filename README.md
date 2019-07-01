@@ -362,7 +362,7 @@ And will be used in resources section like this:
   }
 }
 ```
-or "content": "$comment * N"` which N is a positive number.
+or "content": `"$comment * N"` which N is a positive number.
 
 
 Downloading a file 
