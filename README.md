@@ -1,5 +1,8 @@
 # mock-server
 
+[![Gitter](https://badges.gitter.im/dotnetcore-mock-server/community.svg)](https://gitter.im/dotnetcore-mock-server/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
+
 declarative mock server with fake data generation capabilities for .NET Core 2.1
 
 this project started after meeting https://github.com/gencebay and learning his cool project https://github.com/gencebay/httplive
@@ -359,7 +362,7 @@ And will be used in resources section like this:
   }
 }
 ```
-or "content": "$comment * N"` which N is a positive number.
+or "content": `"$comment * N"` which N is a positive number.
 
 
 Downloading a file 
