@@ -45,10 +45,7 @@ public partial class MockServerConfig
     {
     }
 
-    static MockServerConfig()
-    {
-        DefaultConfigFileFullpath = Path.Join(AppContext.BaseDirectory, "configTemplate.json");
-    }
+    static MockServerConfig() => DefaultConfigFileFullpath = Path.Join(AppContext.BaseDirectory, "configTemplate.json");
 
     static MockServerConfig instance = null;
 

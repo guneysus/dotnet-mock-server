@@ -9,10 +9,7 @@ using System;
 
 public class ExampleStartup
 {
-    public ExampleStartup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
+    public ExampleStartup(IConfiguration configuration) => Configuration = configuration;
 
     public IConfiguration Configuration { get; }
 
