@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -x
-
 dotnet publish src/dotnet-mock-server/dotnet-mock-server.csproj \
 	--configuration Release \
 	--output build \
