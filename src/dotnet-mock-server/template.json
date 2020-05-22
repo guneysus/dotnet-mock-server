@@ -1,0 +1,192 @@
+{
+  "templates": {
+    "@comment": {
+      "_id": "$guid",
+      "user": {
+        "name": "$fullname"
+      },
+      "title": "$lorem.sentence",
+      "text": "$lorem.paragraph",
+      "date": "$random.date"
+    },
+    "@comments": {
+      "data": "fn::@comment * 10"
+    }
+  },
+  "resources": {
+    "/json": {
+      "get": {
+        "content": {
+          "hello": "world"
+        },
+
+        "contentType": "application/json"
+      }
+    },
+
+    "/xml": {
+      "get": {
+        "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><note>  <to>Tove<\/to>  <from>Jani<\/from>  <heading>Reminder<\/heading>  <body>Don't forget me this weekend!<\/body><\/note>",
+        "contentType": "application/xml"
+      }
+    },
+
+    "/download": {
+      "get": {
+        "contentType": "application/octet-stream",
+        "content": "Hello world",
+        "headers": {
+          "content-disposition": "attachment; filename=hello.txt"
+        }
+      }
+    },
+
+    "/api/user": {
+      "get": {
+        "content": [
+          {
+            "id": "100",
+            "createdAt": "2019-05-06T19:32:07.034Z",
+            "name": "Rosario Beier",
+            "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
+          },
+          {
+            "id": "200",
+            "createdAt": "2019-05-07T10:28:32.699Z",
+            "name": "Rocio Gibson DVM",
+            "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/SlaapMe/128.jpg"
+          },
+          {
+            "id": "300",
+            "createdAt": "2019-05-06T17:00:24.825Z",
+            "name": "Adeline Torphy",
+            "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/catadeleon/128.jpg"
+          }
+        ]
+      }
+    },
+
+    "/api/user/{id:int}": {
+      "get": {
+        "content": {
+          "id": "$random.numeric",
+          "createdAt": "$random.date",
+          "name": "$fullname",
+          "avatar": "https://s3.amazonaws.com/uifaces/faces/twitter/prrstn/128.jpg"
+        },
+        "dynamic": true
+      }
+    },
+
+    "/api/comment/{id:int}": {
+      "get": {
+        "dynamic": true,
+        "content": "@comment"
+      }
+    },
+
+    "/api/comment": {
+      "get": {
+        "dynamic": true,
+        "content": "fn::@comment * 10"
+      }
+    },
+
+    "/headers": {
+      "get": {
+        "content": "<h2 style='font-family:monospace;'\">Check the response Headers.</h2>
+<p>They must be:</p>
+<pre>
+content-type: text/html,
+X-Powered-By: NMock
+        </pre>
+        ",
+        "headers": {
+          "content-type": "text/html",
+          "X-Powered-By": "NMock"
+        }
+      }
+    },
+
+    "/redirect": {
+      "get": {
+        "headers": {
+          "Location": "https://example.com"
+        },
+        "statusCode": 301
+      }
+    },
+
+    "/fake/comment/{id:int}": {
+      "get": {
+        "content": {
+          "_id": "$guid",
+          "title": "$lorem.sentence",
+          "text": "$lorem.paragraph",
+          "user": {
+            "_id": "$guid",
+            "birthDate": "$date.birth",
+            "name": "$name",
+            "fullname": "$fullname",
+            "phone": "$phoneNumber",
+            "email": "$email",
+            "username": "$userName",
+            "company": {
+              "_id": "$guid",
+              "address": {
+                "city": "$address.city",
+                "country": "$address.country",
+                "zipcode": "$address.zipcode",
+                "street": "$address.streetName",
+                "streetAddress": "$address.streetAddress"
+              }
+            },
+            "random": {
+              "number": "$random.number",
+              "date": "$random.date",
+              "bool": "$random.bool",
+              "alpha": "$random.alpha",
+              "alphaNumeric": "$random.alphaNumeric",
+              "numeric": "$random.numeric",
+              "pattern": "$random.pattern"
+            }
+          }
+        },
+
+        "contentType": "application/json",
+        "dynamic": true
+      }
+    },
+
+    "/request/{id:int}": {
+      "get": {
+        "content": "Submit this form:
+<form method='post'>
+    <input type='text' name='firstName' value='Ahmed Şeref' />
+    <input type='text' name='lastName' value='Ağa' />
+    <input type='submit' value='Submit' />
+</form>",
+        "headers": {
+          "content-type": "text/html; charset=UTF-8",
+          "X-Powered-By": "NMock"
+        }
+      },
+      "post": {
+        "dynamic": true,
+		"contentType": "application/json; charset=UTF-8",
+        "headers": {
+          "X-Powered-By": "NMock"
+        },
+        "content": {
+          "headers": "$request.headers",
+          "query": "$request.query",
+          "form": "$request.form",
+          "route": "$route",
+          "formFoo": "$request.form.foo",
+          "routeId": "$route.id",
+          "queryResult": "$request.query.result"
+        }
+      }
+    }
+  }
+}

@@ -6,5 +6,3 @@ dotnet publish .\src\dotnet-mock-server\dotnet-mock-server.csproj `
 	-p:PublishTrimmed=true `
 	--self-contained true `
 	--runtime win-x64 
-	
-	# -p:PublishReadyToRunShowWarnings=true

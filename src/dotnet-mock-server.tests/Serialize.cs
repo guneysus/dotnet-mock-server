@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace dotnet_mock_server.tests
+namespace NMock.tests
 {
     public static class Serialize
     {

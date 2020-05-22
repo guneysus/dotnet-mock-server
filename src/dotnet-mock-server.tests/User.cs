@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace dotnet_mock_server.tests
+namespace NMock.tests
 {
     public partial class User
     {

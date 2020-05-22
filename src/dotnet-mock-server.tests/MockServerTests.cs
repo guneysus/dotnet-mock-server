@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace dotnet_mock_server.tests
+namespace NMock.tests
 {
     public class MockServerTests : IClassFixture<CustomWebApplicationFactory<Startup>>
     {

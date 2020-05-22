@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace dotnet_mock_server.tests
+namespace NMock.tests
 {
     public partial class Comment
     {

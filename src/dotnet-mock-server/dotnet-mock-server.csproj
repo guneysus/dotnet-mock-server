@@ -6,7 +6,7 @@
     <!-- <AspNetCoreHostingModel>inprocess</AspNetCoreHostingModel> -->
     <AspNetCoreHostingModelV2>InProcess</AspNetCoreHostingModelV2>
 
-    <RootNamespace>dotnet_mock_server</RootNamespace>
+    <RootNamespace>NMock</RootNamespace>
     <PackageLicenseUrl>https://github.com/guneysus/mock-server/blob/master/LICENSE</PackageLicenseUrl>
     <NoWarn>NU5105;NU5125</NoWarn>    
   </PropertyGroup>
@@ -18,13 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="mockServer.json" />
+    <None Remove="template.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="mockServer.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Startup.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Program.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,6 +49,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="template.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="configTemplate.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -60,7 +68,7 @@
     <ToolCommandName>dotnet-mock-server</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <StartupObject>dotnet_mock_server.Program</StartupObject>
+    <StartupObject>NMock.Program</StartupObject>
        <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
        <ApplicationIcon />
        <Version>1.0.4</Version>

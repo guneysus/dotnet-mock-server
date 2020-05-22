@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NMock;
 using System;
 using System.IO;
 using System.Linq;
 
-namespace dotnet_mock_server
+namespace NMock
 {
     public class Startup
     {
