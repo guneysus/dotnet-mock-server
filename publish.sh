@@ -6,6 +6,6 @@ dotnet publish src/dotnet-mock-server/dotnet-mock-server.csproj \
 	--no-build \
 	-p:PublishReadyToRun=false \
 	-p:PublishSingleFile=true \
-	-p:PublishTrimmed=true \
+	-p:PublishTrimmed=false \
 	--self-contained true \
 	--runtime win-x64
