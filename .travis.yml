@@ -17,3 +17,7 @@ deploy:
   file: "build/nmock.exe"
   skip_cleanup: true
   on: master
+  
+cache:
+    directories:
+    - $HOME/AppData/Local/Temp/chocolatey  
