@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dotnet publish src/dotnet-mock-server/dotnet-mock-server.csproj \
+dotnet publish dotnet-mock-server/dotnet-mock-server.csproj \
 	--configuration Release \
 	--output build \
 	--no-build \
