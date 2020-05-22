@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Converters;
 using System.Globalization;
 
-namespace dotnet_mock_server.tests
+namespace NMock.tests
 {
     internal static class Converter
     {

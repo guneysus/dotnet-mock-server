@@ -5,13 +5,12 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Runtime.InteropServices;
 
-namespace dotnet_mock_server
+namespace NMock
 {
-    public class Program
+    public static class Program
     {
-        private const string CONFIG_FILE_NAME = "mockServer.json";
-
         public static void Main(string[] args)
         {
 
@@ -23,13 +22,17 @@ namespace dotnet_mock_server
                 new Argument<bool>(defaultValue: false));
 
 
-            var defaultConfigFileFullPath = Path.Join(Directory.GetCurrentDirectory(), CONFIG_FILE_NAME);
-
+            string DEFAULT_CONFIG_PATH = Path.Join(Directory.GetCurrentDirectory(), "mockServer.json");
 
             var configOption = new Option(
                 "--config",
                 "Config file path",
-                new Argument<string>(defaultConfigFileFullPath));
+                new Argument<string>(DEFAULT_CONFIG_PATH));
+
+            var urlsOption = new Option("--urls", "" +
+                "Set ASP.Net Core URL: Example: --urls http://+:3005",
+                new Argument<string>("http://localhost:3005"));
+
 
             // Add them to the root command
             var rootCommand = new RootCommand();
@@ -37,15 +40,16 @@ namespace dotnet_mock_server
 
             rootCommand.AddOption(generateConfigOption);
             rootCommand.AddOption(configOption);
+            rootCommand.AddOption(urlsOption);
 
             rootCommand.Handler = CommandHandler.Create<bool, string>((generateConfig, config) =>
             {
-                if (config == CONFIG_FILE_NAME)
+                if (config == "mockServer.json")
                 {
                     throw new ArgumentException(nameof(config));
                 }
 
-                //var configTemplate = new FileInfo(DEFAULT_CONFIG_FILE).FullName;
+                var configTemplate = new FileInfo(DEFAULT_CONFIG_PATH).FullName;
 
                 Console.WriteLine($"--generate-config => {generateConfig}");
 
@@ -86,6 +90,7 @@ namespace dotnet_mock_server
                     config.SetBasePath(Directory.GetCurrentDirectory());
                     config.AddEnvironmentVariables();
                     config.AddCommandLine(args);
+
                 })
                 .UseStartup<Startup>();
         }

@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <!-- <AspNetCoreHostingModel>inprocess</AspNetCoreHostingModel> -->
     <AspNetCoreHostingModelV2>InProcess</AspNetCoreHostingModelV2>
 
-    <RootNamespace>dotnet_mock_server</RootNamespace>
+    <RootNamespace>NMock</RootNamespace>
     <PackageLicenseUrl>https://github.com/guneysus/mock-server/blob/master/LICENSE</PackageLicenseUrl>
     <NoWarn>NU5105;NU5125</NoWarn>    
   </PropertyGroup>
@@ -18,13 +18,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="mockServer.json" />
+    <None Remove="template.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="mockServer.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Include="Startup.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Program.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,7 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Transport.Libuv" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.CommandLine.Experimental" Version="0.2.0-alpha.19174.3" />
   </ItemGroup>
 
@@ -43,6 +46,12 @@
     <Reference Include="System.Drawing">
       <HintPath>System.Drawing</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="template.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -59,7 +68,7 @@
     <ToolCommandName>dotnet-mock-server</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <StartupObject>dotnet_mock_server.Program</StartupObject>
+    <StartupObject>NMock.Program</StartupObject>
        <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
        <ApplicationIcon />
        <Version>1.0.4</Version>
