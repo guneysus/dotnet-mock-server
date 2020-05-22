@@ -12,4 +12,5 @@ dotnet publish src/ \
 	--self-contained true \
 	--runtime win-x64
 
-rm build/*.pdb && mv build/dotnet-mock-server.exe build/nmock.exe	
+# rm build/*.pdb && 
+mv build/dotnet-mock-server.exe build/nmock.exe	
