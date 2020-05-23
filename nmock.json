@@ -1,8 +1,8 @@
 {
   "version": "0.3",
-  "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v$version/nmock.exe",
+  "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v0.3/nmock.exe",
   "autoupdate": {
-    "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v$version/nmock.exe"
+    "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v0.3/nmock.exe"
   },
   "bin": "nmock.exe"
 }
