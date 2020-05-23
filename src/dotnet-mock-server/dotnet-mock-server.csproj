@@ -65,10 +65,7 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <PackAsTool>true</PackAsTool>
-    <ToolCommandName>dotnet-mock-server</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <StartupObject>NMock.Program</StartupObject>
        <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
        <ApplicationIcon />
