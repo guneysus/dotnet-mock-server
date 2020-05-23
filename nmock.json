@@ -1,5 +1,5 @@
 {
-  "version": "0.2",
+  "version": "0.3",
   "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v$version/nmock.exe",
   "autoupdate": {
     "url": "https://github.com/guneysus/dotnet-mock-server/releases/download/v$version/nmock.exe"
