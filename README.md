@@ -16,9 +16,18 @@ this project started after meeting https://github.com/gencebay and learning his 
 
 ## Installation
 
+### .NET Core Global Tool (requires .NET Core Runtime)
+
 ```
 dotnet tool install -v n --no-cache --global --add-source https://www.myget.org/F/guneysu/api/v3/index.json dotnet-mock-server
 ```
+
+### Zero Dependency Single Executable
+
+```shell
+scoop install https://raw.githubusercontent.com/guneysus/dotnet-mock-server/master/nmock.json
+```
+
 
 ## Arguments
 
